@@ -13,3 +13,7 @@ bridge.
 # Planned bridges
  - Twitter
  - Discord
+
+## Required packages
+
+* tornado
