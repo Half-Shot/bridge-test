@@ -1,0 +1,15 @@
+id: 463777a0f0c747ce0f2b5745967f54ff97259436d8c8a6338f5bdfed64032d93
+hs_token: bc38406d7d52eebb3fda30eaa1f8640c4e0f347b44c106cf62f88a6629d0076f
+as_token: 80cf66ff0bc966ea31e83f490f28120ecb1f27144c9077674b2d9e4708a7a5e6
+namespaces:
+  users:
+    - exclusive: true
+      regex: '@twitter_.*'
+  aliases:
+    - exclusive: true
+      regex: '#twitter_@.*'
+    - exclusive: true
+      regex: '#twitter_#.*'
+  rooms: []
+url: 'http://localhost:9000'
+sender_localpart: twitbot
