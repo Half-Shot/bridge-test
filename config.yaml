@@ -1,0 +1,5 @@
+synapse:
+  path: synapse
+  registration_shared_secret: thisisntverysecret
+temp_directory: /tmp/
+output_directory: results
