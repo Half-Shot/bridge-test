@@ -4,12 +4,12 @@ as_token: 80cf66ff0bc966ea31e83f490f28120ecb1f27144c9077674b2d9e4708a7a5e6
 namespaces:
   users:
     - exclusive: true
-      regex: '@twitter_.*'
+      regex: '@_twitter_.*'
   aliases:
     - exclusive: true
-      regex: '#twitter_@.*'
+      regex: '#_twitter_@.*'
     - exclusive: true
-      regex: '#twitter_#.*'
+      regex: '#_twitter_#.*'
   rooms: []
 url: 'http://localhost:9000'
 sender_localpart: twitbot

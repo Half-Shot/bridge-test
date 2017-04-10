@@ -28,6 +28,7 @@ class TwitterProxy(Thread):
         app = Application([
             (r"https://api.twitter.com/oauth2/(.*)", handlers.TOAuthHandler),
             (API_URL + "application/(.*)", handlers.TApplicationHandler),
+            (API_URL + r"users/(.*)", handlers.TUsersHandler),
             (r"https://api.twitter.com/(.*)", handlers.TDummyHandler),
         ])
         logger.info("Started listening on twitter proxy.")

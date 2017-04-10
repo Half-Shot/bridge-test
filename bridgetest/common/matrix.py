@@ -36,6 +36,7 @@ class MatrixHelper():
             rmtree(join(self.location, "media_store"))
             rmtree(join(self.location, "uploads"))
             unlink(join(self.location, "homeserver.db"))
+            unlink(join(self.location, "homeserver.log"))
         # Create testing user
         self.start()
         self.__register_user()
