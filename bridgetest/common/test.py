@@ -26,10 +26,11 @@ class TestResults(dict):
 
 
 class TestFailureException(Exception):
-    def __init__(self, message, assertion=None, output=("","")) :
+    def __init__(self, message, assertion=None, output=("", ""), vars={}):
         Exception.__init__(self, message)
         self.assertion = assertion
         self.output = output
+        self.vars = vars
 
     def toDict(self):
         return {
@@ -37,6 +38,7 @@ class TestFailureException(Exception):
             "assertion": str(self.assertion) if self.assertion is not None else None,
             "out": self.output[0].split("\n"),
             "err": self.output[1].split("\n"),
+            "vars": self.vars,
         }
 
 
@@ -45,6 +47,7 @@ class Test:
         self.name = name
         self.depth = 0
         self.state = {}
+        self.var = {}
         pass
 
     def run(self):
@@ -79,6 +82,9 @@ class Test:
                     return f.read()
         return None
 
+    def add_var(self, name, value):
+        self.var[name] = value
+
 
 class TestGroup(Test):
     def __init__(self, name):
@@ -99,7 +105,8 @@ class TestGroup(Test):
                 raise TestFailureException(
                     str(e),
                     assertion=e,
-                    output=test.state.get("output", ("", ""))
+                    output=test.state.get("output", ("", "")),
+                    vars=test.var,
                     )
             except Exception as e:
                 raise TestFailureException(message=e)
