@@ -2,7 +2,7 @@
 /synapse
 
 # Results
-/results/*.json
+/webui/results/*.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

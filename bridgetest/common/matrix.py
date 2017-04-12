@@ -7,6 +7,7 @@ import hmac
 import contextlib
 from os import unlink
 from matrix_client.client import MatrixClient
+from matrix_client.user import User
 from os.path import join
 from shutil import rmtree
 HS_URL = "http://localhost:8008"
@@ -44,7 +45,7 @@ class MatrixHelper():
 
     def start(self):
         if self.isRunning():
-            logger.info("synapse is already running")
+            logger.debug("synapse is already running")
             return
         logger.info("starting synapse")
         process = subprocess.Popen(
@@ -61,11 +62,16 @@ class MatrixHelper():
     def getClient(self):
         if not self.isRunning():
             raise Exception("Synapse isn't running.")
-        return MatrixClient(HS_URL, token=self.accessToken, user_id=self.userId)
+        if self.client is None:
+            self.client = MatrixClient(HS_URL, token=self.accessToken, user_id=self.userId)
+        return self.client
+
+    def getUser(self, user_id):
+        return User(self.client.api, user_id)
 
     def stop(self):
         if not self.isRunning():
-            logger.info("synapse is not running")
+            logger.debug("synapse is not running")
             return
         logger.info("stopping synapse.")
         process = subprocess.Popen(
@@ -90,14 +96,13 @@ class MatrixHelper():
             "admin": True,
         }
 
-        logger.info("attempting to register user")
+        logger.debug("attempting to register user")
         try:
             req = requests.post(
                 "%s/_matrix/client/api/v1/register" % (HS_URL),
                 data=json.dumps(data),
             )
             if req.ok:
-                logger.info("succeeded")
                 data = req.json()
                 self.accessToken = data["access_token"]
                 self.userId = data["user_id"]
