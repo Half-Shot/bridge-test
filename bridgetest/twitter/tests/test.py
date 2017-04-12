@@ -3,6 +3,7 @@ from shutil import copyfile
 from os import unlink
 from os.path import join, exists
 import logging
+import contextlib
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +39,7 @@ class TwitterTestGroup(TestGroup):
             True
         )
 
-    def before_each(self, cfgFile):
+    def before_each(self, cfgFile, clearDB=False):
         logger.debug("before_each (%s) -> copying files", self.name)
         try:
             copyfile(self.state[cfgFile], self.state["config_path"])
@@ -46,6 +47,7 @@ class TwitterTestGroup(TestGroup):
         except FileNotFoundError as e:
             logger.error("Couldn't create config file because the source does not exist")
             raise Exception("Fatal problem in before_each.", e)
+
 
     def after_each(self):
         logger.debug("after_each (%s) -> deleting files", self.name)
@@ -73,6 +75,12 @@ class TwitterTest(Test):
         if "matrix" in self.state:
             self.matrix = self.state["matrix"]
 
+    def clear_data(self):
+        with contextlib.suppress(FileNotFoundError):
+            unlink(self.state["room_store_path"])
+            unlink(self.state["user_store_path"])
+            unlink(self.state["db_path"])
+
     def _assert_startup(self, timedOut, returnCode):
         log = self.getLog()
         assert log is not None, "log file not found."
@@ -81,3 +89,6 @@ class TwitterTest(Test):
         assert exists(self.state["db_path"]), "database should exist"
         assert exists(self.state["bearer_path"]), "bearer token should exist"
         assert log.find("Created user 'twitbot'")
+
+    def after_test(self):
+        self.npm.stop_process() # Make sure the process has exited
