@@ -57,6 +57,7 @@ class TwitterTest:
             })
             root.addTest(tests.StartBridgeTestGroup())
             root.addTest(tests.AliasesTestGroup())
+            root.addTest(tests.ProfileTestGroup())
             results = root.run_all(testNumbers=args.testgroups)
         matrix.stop()
         proxy.stop()
