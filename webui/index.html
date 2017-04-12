@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Bridge Test Results</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+  </head>
+
+  <body  data-spy="scroll" data-target="#testgroupswrap">
+    <div class="container">
+      <div class="row page-header">
+        <div class="col-md-10">
+            <h1>Results <small id="root_name">No test</small></h1>
+            <h2>Test Groups: <span id="stats_passed">%PASS</span>/<span id="stats_total">%TOTAL</span></h2>
+            <div class="progress">
+              <div class="progress-bar progress-bar-success" id="stat_passed_pb" role="progressbar" style="min-width: 3em;">
+                %PASS
+              </div>
+              <div class="progress-bar progress-bar-danger" id="stat_failed_pb" role="progressbar" style="min-width: 3em;">
+                %FAIL
+              </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+          <div class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="dropdown_file" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              Select Result File
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" id="dropdown_file_files" aria-labelledby="dropdown_file">
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div hidden class="alert alert-success" id="root_passed" role="alert">Success! All tests are passing 🍻</div>
+      <div hidden class="alert alert-info" id="root_info" role="alert">Select a test from the dropdown on the right.</div>
+      <div hidden class="alert alert-danger" id="root_failed" role="alert">Some tests aren't quite passing 😞</div>
+      <div class="row">
+      <div class="col-md-2" >
+        <h4>Options</h4>
+        <label for="showPassed">Show passed tests</label>
+        <input type="checkbox" id="showPassed"/>
+        <hr/>
+        <h4>Groups</h4>
+        <div id="testgroupswrap">
+          <ul class="nav nav-pills nav-stacked" id="testgroups">
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-10" id="testgroups">
+        <h4>Results</h4>
+        <article id="results">
+        </article>
+      </div>
+    </div>
+    <hr/>
+    <script src="js/jquery-3.2.0.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/script.js"></script>
+  </body>
+</html>

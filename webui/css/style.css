@@ -1,0 +1,17 @@
+.container {
+  width: 90vw;
+}
+
+.panel-heading {
+  text-transform: capitalize;
+}
+
+#results {
+  position: relative;
+  overflow-y: scroll;
+  height: 50vh;
+}
+
+#results section[data-result="true"]{
+  color: rgb(138, 138, 138);
+}
