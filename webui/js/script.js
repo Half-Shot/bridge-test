@@ -29,7 +29,6 @@ function setupOptions() {
     });
   } else {
     $("#showPassed").hidden = true;
-    $("#showPassed").attr("disabled", true);
     $("#showPassed").attr("checked", true);
     window.opts.showPassed = true;
   }

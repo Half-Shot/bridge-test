@@ -9,7 +9,7 @@ class TUsersHandler(RequestHandler):
 
     def show(self):
         sn = self.get_query_argument("screen_name")
-        if sn not in ["foobar", "foobarprotect"]:
+        if sn not in ["foobar"]:
             self.write({"error": {
                 "code": 404,
                 "message": "User not found",
@@ -17,8 +17,7 @@ class TUsersHandler(RequestHandler):
             })
             return 404
         new_user = TUsersHandler.dummy_user()
-        new_user["screen_name"] = sn
-        new_user["protected"] = sn == "foobarprotect"
+        new_user["protected"] = self.settings["test_state"].get("user.protected", False)
         self.write(new_user)
         return 200
 
@@ -37,6 +36,18 @@ class TUsersHandler(RequestHandler):
             "screen_name": "foobar",
             "description": "The foo to your bar",
             "url": "https://matrix.org",
-            "protected": "foobar",
-            "profile_image_url_https": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/672px-SMPTE_Color_Bars.svg.png",
+            "protected": False,
+            "profile_image_url_https": "https://placeholdit.imgix.net/~text?txtsize=12&txt=128%C3%97128&w=128&h=128&txt=avatar",
+        }
+
+    def dummy_user_2():
+        return {
+            "id": 54321,
+            "id_str": "54321",
+            "name": "BarBaz",
+            "screen_name": "barbaz",
+            "description": "The bar to your baz",
+            "url": "https://matrix.org",
+            "protected": False,
+            "profile_image_url_https": "https://placeholdit.imgix.net/~text?txtsize=12&txt=128%C3%97128&w=128&h=128&txt=changed",
         }

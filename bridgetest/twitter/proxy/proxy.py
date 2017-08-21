@@ -11,10 +11,12 @@ CONSUMERSECRET = "CONSUMERSECRETBAR"
 BEARERTOKEN = "ABCDEF"
 API_URL = "https://api.twitter.com/1.1/"
 
+
 class TwitterProxy(Thread):
     def __init__(self):
         super(TwitterProxy, self).__init__()
         self.name = "TwitterProxy"
+        self.app = None
 
     def run(self):
         tornado.ioloop.IOLoop.current().start()
@@ -25,7 +27,7 @@ class TwitterProxy(Thread):
             self.join()
 
     def start(self, port=8086):
-        app = Application([
+        self.app = Application([
             (r"https://api.twitter.com/oauth2/(.*)", handlers.TOAuthHandler),
             (API_URL + "application/(.*)", handlers.TApplicationHandler),
             (API_URL + "users/(.*)", handlers.TUsersHandler),
@@ -33,5 +35,10 @@ class TwitterProxy(Thread):
             (r"https://api.twitter.com/(.*)", handlers.TDummyHandler),
         ])
         logger.info("Started listening on twitter proxy.")
-        app.listen(port)
+        self.app.listen(port)
         super(TwitterProxy, self).start()
+
+    def apply_state(self, test_state):
+        logger.debug("Applying proxy state to proxy.")
+        print(test_state)
+        self.app.settings["test_state"] = test_state

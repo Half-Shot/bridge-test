@@ -40,6 +40,7 @@ class TwitterTestGroup(TestGroup):
         )
 
     def before_each(self, cfgFile, clearDB=False):
+        self.clearDB = clearDB
         logger.debug("before_each (%s) -> copying files", self.name)
         try:
             copyfile(self.state[cfgFile], self.state["config_path"])
@@ -65,6 +66,10 @@ class TwitterTestGroup(TestGroup):
 class TwitterTest(Test):
     def __init__(self, name):
         Test.__init__(self, name)
+
+    def before_test(self):
+        self.state["proxy"].apply_state(self.state["proxy_state"])
+
 
     def set_state(self, new_state):
         super().set_state(new_state)

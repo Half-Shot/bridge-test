@@ -50,9 +50,12 @@ class TwitterTest:
                 'npm': npm,
                 'git': git,
                 'matrix': matrix,
+                'proxy': proxy,
+                'proxy_state': {},
                 'cmd': ["twitter-as.js", "-p", "9000", "-c", "config.yaml"],
                 'config': join(root_dir, "configs", "config.yaml"),
                 'config.min': join(root_dir, "configs", "config.min.yaml"),
+                'config.profile.displayname': join(root_dir, "configs", "config.profile.displayname.yaml"),
                 'registration': join(root_dir, "configs", "registration.yaml"),
             })
             root.addTest(tests.StartBridgeTestGroup())
