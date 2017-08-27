@@ -142,10 +142,12 @@ function addToDoc(results) {
   document.querySelector("#testgroups").innerHTML = ""
   article.classList.add("test");
   article.classList.add("root");
-
+  var totalTime = 0;
   results.results.forEach((result) => {
     article.innerHTML += addSection(result, article);
+    totalTime += result.time;
   });
+  document.querySelector("#timetaken").innerHTML = Math.round(totalTime,2);
 }
 
 function addSection(result, parent) {
