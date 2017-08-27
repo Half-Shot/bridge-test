@@ -16,8 +16,10 @@ class TUsersHandler(RequestHandler):
                 }
             })
             return 404
-        new_user = TUsersHandler.dummy_user()
-        new_user["protected"] = self.settings["test_state"].get("user.protected", False)
+        if sn == "foobar":
+            new_user = TUsersHandler.dummy_user()
+        elif sn == "foobarprotected":
+            new_user = TUsersHandler.dummy_user_protected()
         self.write(new_user)
         return 200
 
@@ -37,6 +39,18 @@ class TUsersHandler(RequestHandler):
             "description": "The foo to your bar",
             "url": "https://matrix.org",
             "protected": False,
+            "profile_image_url_https": "https://placeholdit.imgix.net/~text?txtsize=12&txt=128%C3%97128&w=128&h=128&txt=avatar",
+        }
+
+    def dummy_user_protected():
+        return {
+            "id": 77777,
+            "id_str": "77777",
+            "name": "FooBar Protected",
+            "screen_name": "foobarprotected",
+            "description": "The foo to your bar. This user is protected.",
+            "url": "https://matrix.org",
+            "protected": True,
             "profile_image_url_https": "https://placeholdit.imgix.net/~text?txtsize=12&txt=128%C3%97128&w=128&h=128&txt=avatar",
         }
 

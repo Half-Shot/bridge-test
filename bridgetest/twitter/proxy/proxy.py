@@ -40,5 +40,4 @@ class TwitterProxy(Thread):
 
     def apply_state(self, test_state):
         logger.debug("Applying proxy state to proxy.")
-        print(test_state)
         self.app.settings["test_state"] = test_state

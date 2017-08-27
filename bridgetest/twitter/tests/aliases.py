@@ -82,14 +82,10 @@ class AliasesTestProtectedTimeline(AliasTest):
     def __init__(self):
         AliasTest.__init__(self, "protected timeline")
 
-    def before_test(self):
-        self.state["proxy_state"] = {"user.protected": True}
-        super().before_test()
-
     def run(self):
         AliasTest.run(self)
         try:
-            self.client.join_room("#_twitter_@foobar:localhost")
+            self.client.join_room("#_twitter_@foobarprotected:localhost")
         except MatrixRequestError as e:
             self.fail = e
         timedOut, returnCode, output = self.npm.stop_process(kill_after=1)
