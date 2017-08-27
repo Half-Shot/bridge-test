@@ -6,7 +6,8 @@ import logging
 import contextlib
 
 logger = logging.getLogger(__name__)
-NPM_KILL_TIMEOUT=3
+NPM_KILL_TIMEOUT = 3
+BRIDGE_STARTUP_WAIT = 10
 
 class TwitterTestGroup(TestGroup):
     def __init__(self, name):
@@ -24,6 +25,7 @@ class TwitterTestGroup(TestGroup):
             "root": root,
             "config_path": new_config,
             "registration_path": new_reg,
+            "bridge_startup_wait": BRIDGE_STARTUP_WAIT,
             "room_store_path": join(root, "room-store.db"),
             "user_store_path": join(root, "user-store.db"),
             "bearer_path": join(root, "bearer.tok"),

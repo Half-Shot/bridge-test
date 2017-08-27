@@ -1,7 +1,4 @@
 from .test import TwitterTest, TwitterTestGroup
-from shutil import copyfile
-from os import unlink
-from os.path import join, exists
 from time import sleep
 from matrix_client.errors import MatrixRequestError
 import logging
@@ -22,52 +19,51 @@ class AliasesTestGroup(TwitterTestGroup):
         TwitterTestGroup.before_each(self, "config.min", clearDB=True)
 
 
-class AliasesTestBadTimeline(TwitterTest):
-    def __init__(self):
-        TwitterTest.__init__(self, "bad timeline screen name")
-
-    def run(self):
+class AliasTest(TwitterTest):
+    def __init__(self, name):
+        TwitterTest.__init__(self, name)
         self.npm.start(
             self.state["root"],
             self.state["cmd"],
             noRead=True,
         )
-        sleep(4)
-        client = self.matrix.getClient()
-        fail = None
+        sleep(self.state["bridge_startup_wait"])
+        self.client = self.matrix.getClient()
+        self.fail = None
+
+
+class AliasesTestBadTimeline(AliasTest):
+    def __init__(self):
+        AliasTest.__init__(self, "bad timeline screen name")
+
+    def run(self):
+        AliasTest.__init__(self)
         try:
-            client.join_room("#_twitter_@abadsa-_4asdfasd<>ds:localhost")
+            self.client.join_room("#_twitter_@abadsa-_4asdfasd<>ds:localhost")
         except MatrixRequestError as e:
-            fail = e
+            self.fail = e
         timedOut, returnCode, output = self.npm.stop_process(kill_after=1)
-        assert fail is not None, "the room should not exist"
-        assert fail.code == 404, "room should not be found. But got %s" % fail.content
-        assert "M_NOT_FOUND" in fail.content, "room error should be M_NOT_FOUND, But got %s" % fail.content
+        assert self.fail is not None, "the room should not exist"
+        assert self.fail.code == 404, "room should not be found. But got %s" % self.fail.content
+        assert "M_NOT_FOUND" in self.fail.content, "room error should be M_NOT_FOUND, But got %s" % self.fail.content
         self.state["output"] = output
         self._assert_startup(timedOut, returnCode)
 
 
-class AliasesTestGoodTimeline(TwitterTest):
+class AliasesTestGoodTimeline(AliasTest):
     def __init__(self):
-        TwitterTest.__init__(self, "good timeline screen name")
+        AliasTest.__init__(self, "good timeline screen name")
 
     def run(self):
-        self.npm.start(
-            self.state["root"],
-            self.state["cmd"],
-            noRead=True,
-        )
-        sleep(4)
-        client = self.matrix.getClient()
-        fail = None
+        AliasTest.__init__(self)
         room = None
         try:
-            room = client.join_room("#_twitter_@foobar:localhost")
+            room = self.client.join_room("#_twitter_@foobar:localhost")
         except Exception as e:
-            fail = e
+            self.fail = e
         timedOut, returnCode, output = self.npm.stop_process(kill_after=1)
-        client.listen_for_events()
-        assert fail is None, "the room should exist, but got %s" % fail
+        self.client.listen_for_events()
+        assert self.fail is None, "the room should exist, but got %s" % self.fail
         events = room.get_events()
         self.add_var("events", room.get_events())
         name = next((ev["content"]["name"] for ev in events if ev["type"] == "m.room.name"), None)
@@ -80,85 +76,64 @@ class AliasesTestGoodTimeline(TwitterTest):
         self._assert_startup(timedOut, returnCode)
 
 
-class AliasesTestProtectedTimeline(TwitterTest):
+class AliasesTestProtectedTimeline(AliasTest):
     def __init__(self):
-        TwitterTest.__init__(self, "protected timeline")
+        AliasTest.__init__(self, "protected timeline")
 
     def before_test(self):
         self.state["proxy_state"] = {"user.protected": True}
         super().before_test()
 
     def run(self):
-        self.npm.start(
-            self.state["root"],
-            self.state["cmd"],
-            noRead=True,
-        )
-        sleep(4)
-        client = self.matrix.getClient()
-        fail = None
+        AliasTest.__init__(self)
         try:
-            client.join_room("#_twitter_@foobar:localhost")
+            self.client.join_room("#_twitter_@foobar:localhost")
         except MatrixRequestError as e:
-            fail = e
+            self.fail = e
         timedOut, returnCode, output = self.npm.stop_process(kill_after=1)
         log = self.getLog()
-        assert fail is not None, "the room should not exist"
-        assert fail.code == 404, "room should not be found. But got %s" % fail.content
-        assert "M_NOT_FOUND" in fail.content, "room error should be M_NOT_FOUND, But got %s" % fail.content
+        assert self.fail is not None, "the room should not exist"
+        assert self.fail.code == 404, "room should not be found. But got %s" % self.fail.content
+        assert "M_NOT_FOUND" in self.fail.content, "room error should be M_NOT_FOUND, But got %s" % self.fail.content
         assert "User is protected, can't create timeline." in log
         self.state["output"] = output
         self._assert_startup(timedOut, returnCode)
 
 
-class AliasesTestBadHashtag(TwitterTest):
+class AliasesTestBadHashtag(AliasTest):
     def __init__(self):
-        TwitterTest.__init__(self, "bad hashtag")
+        AliasTest.__init__(self, "bad hashtag")
 
     def run(self):
-        self.npm.start(
-            self.state["root"],
-            self.state["cmd"],
-            noRead=True,
-        )
-        sleep(4)
-        client = self.matrix.getClient()
-        fail = None
+        AliasTest.__init__(self)
         try:
-            client.join_room("#_twitter_#foo bar:localhost")
+            self.client.join_room("#_twitter_#foo bar:localhost")
         except MatrixRequestError as e:
-            fail = e
+            self.fail = e
         timedOut, returnCode, output = self.npm.stop_process(kill_after=1)
-        assert fail is not None, "the room should not exist"
-        assert fail.code == 404, "room should not be found. But got %s" % fail.content
-        assert "M_NOT_FOUND" in fail.content, "room error should be M_NOT_FOUND, But got %s" % fail.content
+        assert self.fail is not None, "the room should not exist"
+        assert self.fail.code == 404, "room should not be found. But got %s" % self.fail.content
+        assert "M_NOT_FOUND" in self.fail.content, "room error should be M_NOT_FOUND, But got %s" % self.fail.content
         self.state["output"] = output
         self._assert_startup(timedOut, returnCode)
 
 
-class AliasesTestGoodHashtag(TwitterTest):
+class AliasesTestGoodHashtag(AliasTest):
     def __init__(self):
-        TwitterTest.__init__(self, "good hashtag")
+        AliasTest.__init__(self, "good hashtag")
 
     def run(self):
-        self.npm.start(
-            self.state["root"],
-            self.state["cmd"],
-            noRead=True,
-        )
-        sleep(4)
-        client = self.matrix.getClient()
-        fail = None
+        AliasTest.__init__(self)
         room = None
         try:
-            room = client.join_room("#_twitter_#foobar:localhost")
+            room = self.client.join_room("#_twitter_#foobar:localhost")
 
         except Exception as e:
-            fail = e
+            self.fail = e
         timedOut, returnCode, output = self.npm.stop_process(kill_after=1)
-        client.listen_for_events()
+        self.client.listen_for_events()
         events = room.get_events()
-        assert fail is None, "the room should exist, but got %s" % fail
+        assert self.fail is None, "the room should exist, but got %s" % self.fail
         self.add_var("events", events)
         name = next((ev["content"]["name"] for ev in events if ev["type"] == "m.room.name"), None)
         self.add_var("name", name)
