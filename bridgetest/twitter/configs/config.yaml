@@ -1,6 +1,6 @@
 bridge:
   domain: localhost
-  homeserverUrl: http://localhost:8008
+  homeserverUrl: http://localhost:8448
   database_file: twitter.db
 
 app_auth: # Get these from twitter by creating an application through the API site.
