@@ -28,8 +28,8 @@ class TStatusHandler(RequestHandler):
             "user": TUsersHandler.dummy_user(),
         })
         user = TUsersHandler.dummy_user_2()
-        user.id = TUsersHandler.dummy_user().id
-        user.id_str = TUsersHandler.dummy_user().id_str
+        user["id"] = TUsersHandler.dummy_user()["id"]
+        user["id_str"] = TUsersHandler.dummy_user()["id_str"]
         posts.append({
             "created_at": "Wed Aug 27 13:08:46 +0000 2008",
             "entities":
