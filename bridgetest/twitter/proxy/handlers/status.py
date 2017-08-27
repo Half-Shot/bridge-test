@@ -69,7 +69,7 @@ class TStatusHandler(RequestHandler):
                 "text": "Hello from foobar. Number #"+str(i),
                 "user": TUsersHandler.dummy_user(),
             })
-        self.write(dumps(posts))
+        self.write(posts)
         return 200
 
     def get(self, path):
