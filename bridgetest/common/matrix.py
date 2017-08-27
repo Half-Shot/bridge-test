@@ -125,7 +125,7 @@ class MatrixHelper():
 
     def __generate_mac(self):
         mac = hmac.new(
-            key=self.cfg["registration_shared_secret"],
+            key=self.cfg["registration_shared_secret"].encode(),
             digestmod=hashlib.sha1,
         )
         mac.update(HS_USERNAME.encode('utf-8'))
