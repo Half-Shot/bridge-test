@@ -51,7 +51,6 @@ class Test:
         pass
 
     def run(self):
-        print("Ran test")
         return True
 
     def increment_depth(self):

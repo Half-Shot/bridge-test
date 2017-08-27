@@ -60,7 +60,7 @@ class ProfileTestUser(TwitterTest):
 # Is twitter profile ok
 class ProfileCustomName(TwitterTest):
     def __init__(self):
-        TwitterTest.__init__(self, "User Profile")
+        TwitterTest.__init__(self, "User (Custom Name) Profile")
 
     def run(self):
         self.npm.start(
@@ -115,8 +115,7 @@ class ProfileChangeTest(TwitterTest):
         dummy2 = TUsersHandler.dummy_user_2()
         oldName = "%s (@%s)" % (dummy["name"], dummy["screen_name"])
         newName = "%s (@%s)" % (dummy2["name"], dummy2["screen_name"])
-        room = client.join_room("#_twitter_@foobar:localhost")
-        print(room)
+        client.join_room("#_twitter_@foobar:localhost")
         retries = 0
         while retries < 5:
             try:
