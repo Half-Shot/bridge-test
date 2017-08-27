@@ -2,7 +2,7 @@ from .test import TwitterTest, TwitterTestGroup
 from shutil import copyfile
 from os import unlink
 from time import sleep
-from matrix_self.client.errors import MatrixRequestError
+from matrix_client.errors import MatrixRequestError
 from bridgetest.twitter.proxy.handlers.users import TUsersHandler
 import logging
 
