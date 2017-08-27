@@ -36,7 +36,7 @@ class MatrixHelper():
             return False
         return r.status_code == 200
 
-    def refreshSynapse(self):
+    def refreshSynapse(self, killAfter=True):
         self.stop()
         with contextlib.suppress(FileNotFoundError):
             rmtree(join(self.cfg["path"], "media_store"))
@@ -46,7 +46,8 @@ class MatrixHelper():
         # Create testing user
         self.start()
         self.__register_user()
-        self.stop()
+        if killAfter:
+            self.stop()
 
     def start(self):
         if self.isRunning():

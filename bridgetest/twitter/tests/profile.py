@@ -34,7 +34,7 @@ class ProfileTest(TwitterTest):
         self.client = self.matrix.getClient()
 
 
-# Is twitter profile ok
+# Is twitter profile correct
 class ProfileTestUser(ProfileTest):
     def __init__(self):
         ProfileTest.__init__(self, "User Profile")
@@ -64,42 +64,12 @@ class ProfileTestUser(ProfileTest):
         self._assert_startup(timedOut, returnCode)
 
 
-# Is twitter profile ok
-class ProfileCustomName(ProfileTest):
-    def __init__(self):
-        ProfileTest.__init__(self, "User (Custom Name) Profile")
-
-    def run(self):
-        ProfileTest.run(self)
-        user = None
-        dummy = TUsersHandler.dummy_user()
-        self.client.join_room("#_twitter_@foobar:localhost")
-        retries = 0
-        while retries < 5:
-            try:
-                user = self.matrix.getUser("@_twitter_%s:localhost" % dummy["id"])
-                retries = 5
-            except MatrixRequestError as e:
-                if e.code != 404:
-                    raise e
-                logger.info("User was not found, retrying (%d/5)" % retries)
-                retries += 1
-                sleep(1)
-        timedOut, returnCode, output = self.npm.stop_process(kill_after=1)
-        dn = user.get_display_name()
-        assert dn == "%s foobar (@%s)" % (dummy["name"], dummy["screen_name"]), "display name is wrong, got %s" % dn
-        self.state["output"] = output
-        self._assert_startup(timedOut, returnCode)
-
-
-# Is twitter profile ok
+# Is twitter profile when a user changes their name and avatar
 class ProfileChangeTest(ProfileTest):
     def __init__(self):
         ProfileTest.__init__(self, "User Profile Change")
 
     def before_test(self):
-        unlink(self.state["config_path"])
-        copyfile(self.state["config.profile.displayname"], self.state["config_path"])
         self.state["proxy_state"] = {"timeline.profilechange": True}
         super().before_test()
 
@@ -128,5 +98,40 @@ class ProfileChangeTest(ProfileTest):
         dn = user.get_display_name()
         assert user.get_display_name() == newName, "display name is wrong, got '%s'" % dn
         assert user.get_avatar_url() is not None, "avatar url was not set"
+        self.state["output"] = output
+        self._assert_startup(timedOut, returnCode)
+
+
+# Is twitter profile ok when a custom naming format is used.
+class ProfileCustomName(ProfileTest):
+    def __init__(self):
+        ProfileTest.__init__(self, "User (Custom Name) Profile")
+
+    def before_test(self):
+        unlink(self.state["config_path"])
+        # We have to kill synapse first before we can run this test.
+        self.matrix.refreshSynapse(leaveRunning=True)
+        copyfile(self.state["config.profile.displayname"], self.state["config_path"])
+        super().before_test()
+
+    def run(self):
+        ProfileTest.run(self)
+        user = None
+        dummy = TUsersHandler.dummy_user()
+        self.client.join_room("#_twitter_@foobar:localhost")
+        retries = 0
+        while retries < 5:
+            try:
+                user = self.matrix.getUser("@_twitter_%s:localhost" % dummy["id"])
+                retries = 5
+            except MatrixRequestError as e:
+                if e.code != 404:
+                    raise e
+                logger.info("User was not found, retrying (%d/5)" % retries)
+                retries += 1
+                sleep(1)
+        timedOut, returnCode, output = self.npm.stop_process(kill_after=1)
+        dn = user.get_display_name()
+        assert dn == "%s foobar (@%s)" % (dummy["name"], dummy["screen_name"]), "display name is wrong, got %s" % dn
         self.state["output"] = output
         self._assert_startup(timedOut, returnCode)
