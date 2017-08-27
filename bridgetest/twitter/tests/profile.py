@@ -81,7 +81,6 @@ class ProfileChangeTest(ProfileTest):
         oldName = "%s (@%s)" % (dummy["name"], dummy["screen_name"])
         newName = "%s (@%s)" % (dummy2["name"], dummy2["screen_name"])
         self.client.join_room("#_twitter_@foobar:localhost")
-        sleep(10) # Wait for the changes to propagate
         retries = 0
         while retries < 5:
             try:
@@ -97,6 +96,7 @@ class ProfileChangeTest(ProfileTest):
             sleep(1)
         timedOut, returnCode, output = self.npm.stop_process(kill_after=1)
         dn = user.get_display_name()
+        sleep(10) # Wait for the changes to propagate
         assert user.get_display_name() == newName, "display name is wrong, got '%s'" % dn
         assert user.get_avatar_url() is not None, "avatar url was not set"
         self.state["output"] = output
@@ -112,6 +112,7 @@ class ProfileCustomName(ProfileTest):
         unlink(self.state["config_path"])
         # We have to refresh synapse first before we can run this test.
         self.matrix.refreshSynapse(killAfter=False)
+        self.clear_data()
         copyfile(self.state["config.profile.displayname"], self.state["config_path"])
         super().before_test()
 
