@@ -146,7 +146,7 @@ function addToDoc(results) {
   results.results.forEach((result) => {
     article.innerHTML += addSection(result, article);
   });
-  document.querySelector("#timetaken").innerHTML = Math.round(totalTime,2);
+  document.querySelector("#timetaken").innerHTML = Math.round(totalTime* 100) / 100
 }
 
 function addSection(result, parent) {
