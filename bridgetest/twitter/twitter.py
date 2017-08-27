@@ -19,9 +19,10 @@ class TwitterTest:
         git = Git()
         npm = Npm()
         proxy = TwitterProxy()
-        if "synapse" in cfg:
-            if "path" in cfg["homeserver"]:
-                matrix = MatrixHelper(cfg["homeserver"])
+        if "homeserver" in cfg:
+            matrix = MatrixHelper(cfg["homeserver"])
+        else:
+            raise Exception("Missing keys in config. Tests will not run.")
 
         exitCode = 0
         results = None

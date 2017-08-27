@@ -49,7 +49,6 @@ class TwitterTestGroup(TestGroup):
             logger.error("Couldn't create config file because the source does not exist")
             raise Exception("Fatal problem in before_each.", e)
 
-
     def after_each(self):
         logger.debug("after_each (%s) -> deleting files", self.name)
         for f in [
@@ -69,7 +68,6 @@ class TwitterTest(Test):
 
     def before_test(self):
         self.state["proxy"].apply_state(self.state["proxy_state"])
-
 
     def set_state(self, new_state):
         super().set_state(new_state)

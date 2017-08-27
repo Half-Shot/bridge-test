@@ -23,6 +23,7 @@ class MatrixHelper():
         for key in ["path", "url", "registration_shared_secret"]:
             if key not in cfg:
                 logger.critical("'homeserver.%s' is missing from config!" % key)
+                raise Exception("Missing keys in config. Tests will not run.")
         self.accessToken = None
         self.client = None
         pass
