@@ -10,6 +10,7 @@ from matrix_client.client import MatrixClient
 from matrix_client.user import User
 from os.path import join
 from shutil import rmtree
+from urllib.parse import urljoin
 HS_USERNAME = "bridge-test"
 HS_PASSWORD = "bridgetester"
 logger = logging.getLogger(__name__)
@@ -30,7 +31,7 @@ class MatrixHelper():
 
     def isRunning(self):
         try:
-            r = requests.get(join(self.cfg["url"], "/_matrix/client/versions"))
+            r = requests.get(urljoin(self.cfg["url"], "/_matrix/client/versions"))
         except requests.exceptions.ConnectionError as e:
             return False
         return r.status_code == 200
