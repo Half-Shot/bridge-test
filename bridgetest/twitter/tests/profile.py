@@ -81,6 +81,7 @@ class ProfileChangeTest(ProfileTest):
         oldName = "%s (@%s)" % (dummy["name"], dummy["screen_name"])
         newName = "%s (@%s)" % (dummy2["name"], dummy2["screen_name"])
         self.client.join_room("#_twitter_@foobar:localhost")
+        sleep(10) # Wait for the changes to propagate
         retries = 0
         while retries < 5:
             try:
