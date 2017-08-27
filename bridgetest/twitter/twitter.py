@@ -20,12 +20,8 @@ class TwitterTest:
         npm = Npm()
         proxy = TwitterProxy()
         if "synapse" in cfg:
-            if "path" in cfg["synapse"]:
-                matrix = MatrixHelper(cfg["synapse"]["path"])
-            else:
-                log.warn("Cfg synapse.path missing. Synapse will not start")
-        else:
-            log.warn("Cfg synapse missing. Synapse will not start.")
+            if "path" in cfg["homeserver"]:
+                matrix = MatrixHelper(cfg["homeserver"])
 
         exitCode = 0
         results = None

@@ -10,23 +10,26 @@ from matrix_client.client import MatrixClient
 from matrix_client.user import User
 from os.path import join
 from shutil import rmtree
-HS_URL = "http://localhost:8008"
 HS_USERNAME = "bridge-test"
 HS_PASSWORD = "bridgetester"
-HS_SECRET = b"thisisntverysecret"
 logger = logging.getLogger(__name__)
 
 
 class MatrixHelper():
-    def __init__(self, location):
-        self.location = location
+    def __init__(self, cfg):
+        self.cfg = cfg
+        if cfg.type != "synapse":
+            logger.critical("Currently the bridge only supports synapse. Bailing!")
+        for key in ["path", "url", "registration_shared_secret"]:
+            if key not in cfg:
+                logger.critical("'homeserver.%s' is missing from config!" % key)
         self.accessToken = None
         self.client = None
         pass
 
     def isRunning(self):
         try:
-            r = requests.get(HS_URL + "/_matrix/client/versions")
+            r = requests.get(join(self.cfg.url, "/_matrix/client/versions"))
         except requests.exceptions.ConnectionError as e:
             return False
         return r.status_code == 200
@@ -34,10 +37,10 @@ class MatrixHelper():
     def refreshSynapse(self):
         self.stop()
         with contextlib.suppress(FileNotFoundError):
-            rmtree(join(self.location, "media_store"))
-            rmtree(join(self.location, "uploads"))
-            unlink(join(self.location, "homeserver.db"))
-            unlink(join(self.location, "homeserver.log"))
+            rmtree(join(self.cfg.path, "media_store"))
+            rmtree(join(self.cfg.path, "uploads"))
+            unlink(join(self.cfg.path, "homeserver.db"))
+            unlink(join(self.cfg.path, "homeserver.log"))
         # Create testing user
         self.start()
         self.__register_user()
@@ -50,7 +53,7 @@ class MatrixHelper():
         logger.info("starting synapse")
         process = subprocess.Popen(
             "/bin/bash -c 'source bin/activate; synctl start'",
-            cwd=self.location,
+            cwd=self.cfg.path,
             shell=True,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
@@ -63,7 +66,7 @@ class MatrixHelper():
         if not self.isRunning():
             raise Exception("Synapse isn't running.")
         if self.client is None:
-            self.client = MatrixClient(HS_URL, token=self.accessToken, user_id=self.userId)
+            self.client = MatrixClient(self.cfg.url, token=self.accessToken, user_id=self.userId)
         return self.client
 
     def getUser(self, user_id):
@@ -76,7 +79,7 @@ class MatrixHelper():
         logger.info("stopping synapse.")
         process = subprocess.Popen(
             "/bin/bash -c 'source bin/activate; synctl stop'",
-            cwd=self.location,
+            cwd=self.cfg.path,
             shell=True,
             stdout=None,
             stderr=None,
@@ -87,7 +90,6 @@ class MatrixHelper():
 
     def __register_user(self):
         mac = self.__generate_mac()
-
         data = {
             "user": HS_USERNAME,
             "password": HS_PASSWORD,
@@ -99,7 +101,7 @@ class MatrixHelper():
         logger.debug("attempting to register user")
         try:
             req = requests.post(
-                "%s/_matrix/client/api/v1/register" % (HS_URL),
+                "%s/_matrix/client/api/v1/register" % (self.cfg.url),
                 data=json.dumps(data),
             )
             if req.ok:
@@ -116,9 +118,8 @@ class MatrixHelper():
         logger.warn("failed to register new user")
 
     def __generate_mac(self):
-
         mac = hmac.new(
-            key=HS_SECRET,
+            key=self.cfg.registration_shared_secret,
             digestmod=hashlib.sha1,
         )
         mac.update(HS_USERNAME.encode('utf-8'))

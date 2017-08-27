@@ -1,5 +1,7 @@
-synapse:
+homeserver:
+  type: synapse
   path: synapse
+  url: "http://localhost:8448"
   registration_shared_secret: thisisntverysecret
 temp_directory: /tmp/
 output_directory: webui/results
