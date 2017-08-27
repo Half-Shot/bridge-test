@@ -142,10 +142,9 @@ function addToDoc(results) {
   document.querySelector("#testgroups").innerHTML = ""
   article.classList.add("test");
   article.classList.add("root");
-  var totalTime = 0;
+  totalTime = 0;
   results.results.forEach((result) => {
     article.innerHTML += addSection(result, article);
-    totalTime += result.time;
   });
   document.querySelector("#timetaken").innerHTML = Math.round(totalTime,2);
 }
@@ -168,6 +167,7 @@ function addSection(result, parent) {
     if (!window.opts.showPassed && result.result) {
       return "";
     }
+    totalTime += result.time;
     const type = result.result ? "success" : "danger";
     error = result.error != null ? `
       <p class="text-danger">Error:${result.error.message}</p>
