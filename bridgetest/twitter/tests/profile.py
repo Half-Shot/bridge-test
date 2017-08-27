@@ -109,8 +109,8 @@ class ProfileCustomName(ProfileTest):
 
     def before_test(self):
         unlink(self.state["config_path"])
-        # We have to kill synapse first before we can run this test.
-        self.matrix.refreshSynapse(leaveRunning=True)
+        # We have to refresh synapse first before we can run this test.
+        self.matrix.refreshSynapse(killAfter=False)
         copyfile(self.state["config.profile.displayname"], self.state["config_path"])
         super().before_test()
 
