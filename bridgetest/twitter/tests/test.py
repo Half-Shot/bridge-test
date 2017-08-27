@@ -6,7 +6,7 @@ import logging
 import contextlib
 
 logger = logging.getLogger(__name__)
-
+NPM_KILL_TIMEOUT=3
 
 class TwitterTestGroup(TestGroup):
     def __init__(self, name):
@@ -94,4 +94,4 @@ class TwitterTest(Test):
         assert log.find("Created user 'twitbot'")
 
     def after_test(self):
-        self.npm.stop_process() # Make sure the process has exited
+        self.npm.stop_process(kill_after=NPM_KILL_TIMEOUT) # Make sure the process has exited
