@@ -44,6 +44,8 @@ class MatrixHelper():
             unlink(join(self.cfg["path"], "homeserver.db"))
             unlink(join(self.cfg["path"], "homeserver.log"))
         # Create testing user
+        # Invalidate the client
+        self.client = None
         self.start()
         self.__register_user()
         if killAfter:
