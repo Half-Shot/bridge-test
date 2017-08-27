@@ -81,6 +81,7 @@ class TwitterTest(Test):
             self.matrix = self.state["matrix"]
 
     def clear_data(self):
+        logger.debug("clear_data (%s)", self.name)
         with contextlib.suppress(FileNotFoundError):
             unlink(self.state["room_store_path"])
             unlink(self.state["user_store_path"])

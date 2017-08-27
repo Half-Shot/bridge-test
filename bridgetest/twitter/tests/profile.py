@@ -1,11 +1,9 @@
 from .test import TwitterTest, TwitterTestGroup
 from shutil import copyfile
 from os import unlink
-from os.path import join, exists
 from time import sleep
-from matrix_client.errors import MatrixRequestError
+from matrix_self.client.errors import MatrixRequestError
 from bridgetest.twitter.proxy.handlers.users import TUsersHandler
-from shutil import copyfile
 import logging
 
 logger = logging.getLogger(__name__)
@@ -22,10 +20,9 @@ class ProfileTestGroup(TwitterTestGroup):
         TwitterTestGroup.before_each(self, "config.min", clearDB=True)
 
 
-# Is twitter profile ok
-class ProfileTestUser(TwitterTest):
-    def __init__(self):
-        TwitterTest.__init__(self, "User Profile")
+class ProfileTest(TwitterTest):
+    def __init__(self, name):
+        TwitterTest.__init__(self, name)
 
     def run(self):
         self.npm.start(
@@ -33,11 +30,21 @@ class ProfileTestUser(TwitterTest):
             self.state["cmd"],
             noRead=True,
         )
-        sleep(4)
-        client = self.matrix.getClient()
+        sleep(self.state["bridge_startup_wait"])
+        self.client = self.matrix.getself.client()
+
+
+# Is twitter profile ok
+class ProfileTestUser(ProfileTest):
+    def __init__(self):
+        ProfileTest.__init__(self, "User Profile")
+
+    def run(self):
+        ProfileTest.run(self)
         user = None
         dummy = TUsersHandler.dummy_user()
-        client.join_room("#_twitter_@foobar:localhost")
+        self.add_var("twitter_user", dummy)
+        self.client.join_room("#_twitter_@foobar:localhost")
         retries = 0
         while retries < 5:
             try:
@@ -58,21 +65,15 @@ class ProfileTestUser(TwitterTest):
 
 
 # Is twitter profile ok
-class ProfileCustomName(TwitterTest):
+class ProfileCustomName(ProfileTest):
     def __init__(self):
-        TwitterTest.__init__(self, "User (Custom Name) Profile")
+        ProfileTest.__init__(self, "User (Custom Name) Profile")
 
     def run(self):
-        self.npm.start(
-            self.state["root"],
-            self.state["cmd"],
-            noRead=True,
-        )
-        sleep(4)
-        client = self.matrix.getClient()
+        ProfileTest.run(self)
         user = None
         dummy = TUsersHandler.dummy_user()
-        client.join_room("#_twitter_@foobar:localhost")
+        self.client.join_room("#_twitter_@foobar:localhost")
         retries = 0
         while retries < 5:
             try:
@@ -92,9 +93,9 @@ class ProfileCustomName(TwitterTest):
 
 
 # Is twitter profile ok
-class ProfileChangeTest(TwitterTest):
+class ProfileChangeTest(ProfileTest):
     def __init__(self):
-        TwitterTest.__init__(self, "User Profile Change")
+        ProfileTest.__init__(self, "User Profile Change")
 
     def before_test(self):
         unlink(self.state["config_path"])
@@ -103,19 +104,13 @@ class ProfileChangeTest(TwitterTest):
         super().before_test()
 
     def run(self):
-        self.npm.start(
-            self.state["root"],
-            self.state["cmd"],
-            noRead=True,
-        )
-        sleep(4)
-        client = self.matrix.getClient()
+        ProfileTest.run(self)
         user = None
         dummy = TUsersHandler.dummy_user()
         dummy2 = TUsersHandler.dummy_user_2()
         oldName = "%s (@%s)" % (dummy["name"], dummy["screen_name"])
         newName = "%s (@%s)" % (dummy2["name"], dummy2["screen_name"])
-        client.join_room("#_twitter_@foobar:localhost")
+        self.client.join_room("#_twitter_@foobar:localhost")
         retries = 0
         while retries < 5:
             try:

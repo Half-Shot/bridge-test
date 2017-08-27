@@ -42,7 +42,6 @@ class StartBridgeCold(TwitterTest):
             5
         )
         self.state["output"] = output
-
         log = self.getLog()
         assert log is not None, "log file not found."
         assert timedOut, "should not exit premuturely"
@@ -60,7 +59,6 @@ class StartBridgePrevious(TwitterTest):
     def run(self):
         timedOut, returnCode, output = self.npm.start(self.state["root"], self.state["cmd"], 5)
         self.state["output"] = output
-
         log = self.getLog()
         assert log is not None, "log file not found."
         assert timedOut, "should not exit premuturely"
