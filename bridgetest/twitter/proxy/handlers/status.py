@@ -63,13 +63,13 @@ class TStatusHandler(RequestHandler):
                     "user_mentions": [],
                 },
                 "favorite_count": 1138,
-                "id": id,
-                "id_str": str(id),
+                "id": i,
+                "id_str": str(i),
                 "retweet_count": 1585,
                 "text": "Hello from foobar. Number #"+str(i),
                 "user": TUsersHandler.dummy_user(),
             })
-        self.write(posts)
+        self.write(dumps(posts))
         return 200
 
     def get(self, path):
