@@ -9,7 +9,7 @@ class TUsersHandler(RequestHandler):
 
     def show(self):
         sn = self.get_query_argument("screen_name")
-        if sn not in ["foobar"]:
+        if sn not in ["foobar", "foobarprotected"]:
             self.write({"error": {
                 "code": 404,
                 "message": "User not found",
