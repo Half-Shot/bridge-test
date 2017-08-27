@@ -22,6 +22,8 @@ class AliasesTestGroup(TwitterTestGroup):
 class AliasTest(TwitterTest):
     def __init__(self, name):
         TwitterTest.__init__(self, name)
+
+    def run(self):
         self.npm.start(
             self.state["root"],
             self.state["cmd"],
@@ -37,7 +39,7 @@ class AliasesTestBadTimeline(AliasTest):
         AliasTest.__init__(self, "bad timeline screen name")
 
     def run(self):
-        AliasTest.__init__(self)
+        AliasTest.run(self)
         try:
             self.client.join_room("#_twitter_@abadsa-_4asdfasd<>ds:localhost")
         except MatrixRequestError as e:
@@ -55,7 +57,7 @@ class AliasesTestGoodTimeline(AliasTest):
         AliasTest.__init__(self, "good timeline screen name")
 
     def run(self):
-        AliasTest.__init__(self)
+        AliasTest.run(self)
         room = None
         try:
             room = self.client.join_room("#_twitter_@foobar:localhost")
@@ -85,7 +87,7 @@ class AliasesTestProtectedTimeline(AliasTest):
         super().before_test()
 
     def run(self):
-        AliasTest.__init__(self)
+        AliasTest.run(self)
         try:
             self.client.join_room("#_twitter_@foobar:localhost")
         except MatrixRequestError as e:
@@ -105,7 +107,7 @@ class AliasesTestBadHashtag(AliasTest):
         AliasTest.__init__(self, "bad hashtag")
 
     def run(self):
-        AliasTest.__init__(self)
+        AliasTest.run(self)
         try:
             self.client.join_room("#_twitter_#foo bar:localhost")
         except MatrixRequestError as e:
@@ -123,7 +125,7 @@ class AliasesTestGoodHashtag(AliasTest):
         AliasTest.__init__(self, "good hashtag")
 
     def run(self):
-        AliasTest.__init__(self)
+        AliasTest.run(self)
         room = None
         try:
             room = self.client.join_room("#_twitter_#foobar:localhost")
