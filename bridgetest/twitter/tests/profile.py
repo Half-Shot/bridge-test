@@ -31,7 +31,7 @@ class ProfileTest(TwitterTest):
             noRead=True,
         )
         sleep(self.state["bridge_startup_wait"])
-        self.client = self.matrix.getself.client()
+        self.client = self.matrix.getClient()
 
 
 # Is twitter profile ok
